@@ -2,9 +2,6 @@ name: Build FZ ENGINE APK
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - main
 
 jobs:
   build:
