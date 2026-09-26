@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FZ ENGINE • Partner & Seller Console</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <!-- TOP APP BAR -->
+  <header class="top-nav">
+    <div class="nav-brand">
+      <div class="brand-logo">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+      </div>
+      <div>
+        <div class="brand-title">FZ ENGINE <span class="brand-badge">PARTNER PANEL</span></div>
+        <div class="brand-sub">Unified Licensing Engine & Ecosystem</div>
+      </div>
+    </div>
+
+    <div class="nav-controls">
+      <!-- Live Server Health -->
+      <div id="serverHealthBadge" class="health-pill online" onclick="toggleServerModal()">
+        <span class="pulse-dot"></span>
+        <span id="serverHealthText">ONLINE • 38ms</span>
+      </div>
+
+      <!-- Role Selector -->
+      <div class="role-selector">
+        <label for="roleSwitch">Perspective:</label>
+        <select id="roleSwitch" onchange="changeRolePerspective(this.value)">
+          <option value="OWNER">Owner (Root Admin)</option>
+          <option value="DEVELOPER">Developer (Engine Core)</option>
+          <option value="SELLER" selected>Seller (Apex Gaming Hub)</option>
+          <option value="SUPPORT">Support Desk</option>
+          <option value="USER">User (Mobile Gamer)</option>
+        </select>
+      </div>
+
+      <!-- Wallet Balance -->
+      <div class="wallet-badge" title="Seller Wallet Balance">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"></path><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"></path><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"></path></svg>
+        <span id="walletAmount">$8,676.00</span>
+      </div>
+
+      <!-- Notifications -->
+      <button class="icon-btn" onclick="toggleNotifications()" title="Notifications">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+        <span id="notifDot" class="notif-dot"></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- NAVIGATION TABS -->
+  <nav class="sub-nav">
+    <button class="nav-tab active" data-tab="dashboard" onclick="switchTab('dashboard')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="7" height="9" x="3" y="3" rx="1"></rect><rect width="7" height="5" x="14" y="3" rx="1"></rect><rect width="7" height="9" x="14" y="12" rx="1"></rect><rect width="7" height="5" x="3" y="16" rx="1"></rect></svg>
+      Dashboard
+    </button>
+    <button class="nav-tab" data-tab="generator" onclick="switchTab('generator')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m21 2-2 2m-6 6 7 7-3 3-7-7-4 4-2-2 4-4-7-7 3-3 7 7 4-4Z"></path></svg>
+      Generate Keys
+    </button>
+    <button class="nav-tab" data-tab="licenses" onclick="switchTab('licenses')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2"></rect><path d="m9 12 2 2 4-4"></path></svg>
+      License Management
+    </button>
+    <button class="nav-tab" data-tab="rankings" onclick="switchTab('rankings')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path><path d="M4 22h16"></path><path d="M10 14.66V17c0 .55-.45 1-1 1H7c-.55 0-1-.45-1-1v-2.34"></path><path d="M18 14.66V17c0 .55-.45 1-1 1h-2c-.55 0-1-.45-1-1v-2.34"></path><path d="M12 2v20"></path></svg>
+      Seller Rankings
+    </button>
+    <button class="nav-tab" data-tab="audit" onclick="switchTab('audit')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"></polyline><line x1="12" x2="20" y1="19" y2="19"></line></svg>
+      Security & Logs
+    </button>
+    <button class="nav-tab" data-tab="admin" id="adminTabBtn" onclick="switchTab('admin')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+      Admin Controls
+    </button>
+  </nav>
+
+  <!-- MAIN VIEWPORT CONTAINER -->
+  <main class="main-content">
+
+    <!-- 1. DASHBOARD TAB -->
+    <section id="tab-dashboard" class="tab-pane active">
+      <!-- HERO BANNER -->
+      <div class="welcome-card">
+        <div class="welcome-text">
+          <h2>Welcome back, <span id="partnerName">Apex Gaming Hub</span></h2>
+          <p>Verified Tier-1 Distributor • Hardware-backed digital license encryption & immediate APK activation.</p>
+        </div>
+        <div class="welcome-actions">
+          <button class="btn btn-primary" onclick="switchTab('generator')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" x2="12" y1="5" y2="19"></line><line x1="5" x2="19" y1="12" y2="12"></line></svg>
+            Generate Keys
+          </button>
+          <button class="btn btn-outline" onclick="loadDashboardData()">Refresh Data</button>
+        </div>
+      </div>
+
+      <!-- METRIC CARDS -->
+      <div class="metric-grid">
+        <div class="metric-card">
+          <div class="metric-label">TOTAL LICENSES</div>
+          <div class="metric-value" id="statTotalKeys">0</div>
+          <div class="metric-trend text-purple">Issued on Server</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">ACTIVE / UNLOCKED</div>
+          <div class="metric-value text-green" id="statActiveKeys">0</div>
+          <div class="metric-trend text-green">Hardware Bound</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">UNUSED / IN INVENTORY</div>
+          <div class="metric-value text-cyan" id="statUnusedKeys">0</div>
+          <div class="metric-trend text-cyan">Ready for Customers</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">EXPIRED / REVOKED</div>
+          <div class="metric-value text-red" id="statExpiredKeys">0</div>
+          <div class="metric-trend text-red">Lapsed or Revoked</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">KEYS SOLD</div>
+          <div class="metric-value" id="statKeysSold">0</div>
+          <div class="metric-trend text-green">Authoritative Sales</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">TOTAL VOLUME</div>
+          <div class="metric-value text-purple" id="statRevenue">$0.00</div>
+          <div class="metric-trend">Cumulative Turnover</div>
+        </div>
+      </div>
+
+      <!-- RECENT ACTIVITY DUAL GRID -->
+      <div class="dual-grid">
+        <div class="panel-card">
+          <div class="panel-header">
+            <h3>Recent Licenses Created</h3>
+            <a href="javascript:void(0)" onclick="switchTab('licenses')">View All</a>
+          </div>
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Key</th>
+                  <th>Plan</th>
+                  <th>Status</th>
+                  <th>Binding</th>
+                </tr>
+              </thead>
+              <tbody id="recentLicensesBody">
+                <tr><td colspan="4" class="text-center">Loading...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="panel-card">
+          <div class="panel-header">
+            <h3>Recent Verified Sales</h3>
+            <span class="badge-sub">Authoritative Ledger</span>
+          </div>
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Plan</th>
+                  <th>Amount</th>
+                  <th>Territory</th>
+                  <th>Timestamp</th>
+                </tr>
+              </thead>
+              <tbody id="recentSalesBody">
+                <tr><td colspan="4" class="text-center">Loading...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. GENERATE KEYS TAB -->
+    <section id="tab-generator" class="tab-pane">
+      <div class="generator-container">
+        <div class="panel-card">
+          <div class="panel-header">
+            <div>
+              <h3>Cryptographic License Generator</h3>
+              <p class="subtitle">Issue SHA-256 hashed digital licenses for the FZ ENGINE APK.</p>
+            </div>
+          </div>
+
+          <form id="keyGenForm" onsubmit="handleGenerateKeys(event)">
+            <!-- DURATION OPTIONS (STEP 3 REQUIREMENT) -->
+            <div class="form-group">
+              <label class="form-label">Plan Duration</label>
+              <div class="pill-selector">
+                <button type="button" class="duration-pill" onclick="selectDuration('2 Hours', this)">2 Hours</button>
+                <button type="button" class="duration-pill" onclick="selectDuration('1 Day', this)">1 Day</button>
+                <button type="button" class="duration-pill" onclick="selectDuration('2 Days', this)">2 Days</button>
+                <button type="button" class="duration-pill" onclick="selectDuration('3 Days', this)">3 Days</button>
+                <button type="button" class="duration-pill" onclick="selectDuration('7 Days', this)">7 Days</button>
+                <button type="button" class="duration-pill" onclick="selectDuration('15 Days', this)">15 Days</button>
+                <button type="button" class="duration-pill active" onclick="selectDuration('30 Days', this)">30 Days</button>
+                <button type="button" class="duration-pill" onclick="selectDuration('3 Months', this)">3 Months</button>
+                <button type="button" class="duration-pill" onclick="selectDuration('Custom', this)">Custom</button>
+              </div>
+              <input type="hidden" id="selectedDuration" value="30 Days">
+            </div>
+
+            <!-- CUSTOM DURATION INPUT (IF SELECTED) -->
+            <div class="form-group hidden" id="customDaysGroup">
+              <label class="form-label" for="customDaysInput">Custom Duration (In Days)</label>
+              <input type="number" id="customDaysInput" class="form-input" min="1" max="365" value="60" placeholder="e.g. 45">
+            </div>
+
+            <div class="form-row">
+              <!-- PREFIX OPTION -->
+              <div class="form-group col-6">
+                <label class="form-label" for="keyPrefix">Key Prefix</label>
+                <select id="keyPrefix" class="form-input">
+                  <option value="FZ-">FZ- (Standard)</option>
+                  <option value="VIP-">VIP- (Premium)</option>
+                  <option value="APEX-">APEX- (Distributor)</option>
+                  <option value="TURBO-">TURBO- (Fast Pass)</option>
+                </select>
+              </div>
+
+              <!-- QUANTITY OPTION -->
+              <div class="form-group col-6">
+                <label class="form-label" for="keyQuantity">Quantity to Generate</label>
+                <select id="keyQuantity" class="form-input">
+                  <option value="1">1 Key</option>
+                  <option value="5">5 Keys</option>
+                  <option value="10">10 Keys</option>
+                  <option value="25">25 Keys</option>
+                  <option value="50">50 Keys</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary btn-lg" id="btnGenSubmit">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                Generate Secure License Keys
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- GENERATION OUTPUT RESULT -->
+        <div class="panel-card hidden" id="generationResultsCard">
+          <div class="panel-header">
+            <div>
+              <h3 class="text-green">Generated Keys Output</h3>
+              <p class="subtitle">Plaintext keys are revealed only now. Distribute them to your customers.</p>
+            </div>
+            <div class="header-btns">
+              <button class="btn btn-outline" onclick="copyAllGeneratedKeys()">Copy All</button>
+              <button class="btn btn-outline" onclick="downloadKeysTxt()">Export .TXT</button>
+            </div>
+          </div>
+          <div class="generated-keys-list" id="generatedKeysList"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. LICENSE MANAGEMENT TAB -->
+    <section id="tab-licenses" class="tab-pane">
+      <div class="panel-card">
+        <div class="panel-header">
+          <div>
+            <h3>Issued License Vault</h3>
+            <p class="subtitle">Synchronized live with the FZ ENGINE Android app and central SQLite database.</p>
+          </div>
+          <div class="table-filters">
+            <input type="text" id="licenseSearchInput" placeholder="Search by key, plan, or device..." class="filter-search" oninput="handleLicenseSearch()">
+            <select id="licenseStatusFilter" class="filter-select" onchange="loadLicensesTable()">
+              <option value="ALL">All Statuses</option>
+              <option value="ACTIVE">Active (Locked)</option>
+              <option value="UNUSED">Unused (Inventory)</option>
+              <option value="EXPIRED">Expired</option>
+              <option value="REVOKED">Revoked</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>License Key</th>
+                <th>Plan Name</th>
+                <th>Duration</th>
+                <th>Status</th>
+                <th>Hardware Binding</th>
+                <th>Activated At</th>
+                <th>Expires At</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="licensesTableBody">
+              <tr><td colspan="8" class="text-center">Loading licenses...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. SELLER RANKINGS TAB -->
+    <section id="tab-rankings" class="tab-pane">
+      <div class="panel-card">
+        <div class="panel-header">
+          <div>
+            <h3>Verified Seller Leaderboard</h3>
+            <p class="subtitle">Authoritative rankings calculated from central database sales volume.</p>
+          </div>
+          <div class="table-filters">
+            <!-- PERIOD FILTER (STEP 7 REQUIREMENT) -->
+            <div class="pill-selector">
+              <button class="filter-pill active" onclick="changeRankingPeriod('TODAY', this)">Today</button>
+              <button class="filter-pill" onclick="changeRankingPeriod('THIS_WEEK', this)">This Week</button>
+              <button class="filter-pill" onclick="changeRankingPeriod('THIS_MONTH', this)">This Month</button>
+              <button class="filter-pill" onclick="changeRankingPeriod('ALL_TIME', this)">All Time</button>
+            </div>
+            <!-- SCOPE FILTER -->
+            <select id="rankingScopeFilter" class="filter-select" onchange="loadRankings()">
+              <option value="GLOBAL">Global Leaderboard</option>
+              <option value="COUNTRY">By Country</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Rank</th>
+                <th>Seller</th>
+                <th>Territory</th>
+                <th>Period Sales</th>
+                <th>Period Volume</th>
+                <th>Trust Rating</th>
+                <th>Contact</th>
+              </tr>
+            </thead>
+            <tbody id="rankingsTableBody">
+              <tr><td colspan="7" class="text-center">Loading rankings...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. SECURITY & AUDIT LOGS TAB -->
+    <section id="tab-audit" class="tab-pane">
+      <div class="panel-card">
+        <div class="panel-header">
+          <div>
+            <h3>Security & Telemetry Audit Trail</h3>
+            <p class="subtitle">Immutable server-side audit logs for compliance, key generation, and activation events.</p>
+          </div>
+          <button class="btn btn-outline" onclick="loadAuditLogs()">Refresh Audit Trail</button>
+        </div>
+
+        <div class="table-responsive">
+          <table class="data-table font-mono">
+            <thead>
+              <tr>
+                <th>Timestamp</th>
+                <th>Actor</th>
+                <th>Role</th>
+                <th>Action</th>
+                <th>Result</th>
+                <th>Metadata</th>
+              </tr>
+            </thead>
+            <tbody id="auditTableBody">
+              <tr><td colspan="6" class="text-center">Loading audit logs...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. ADMIN / OWNER CONTROLS TAB -->
+    <section id="tab-admin" class="tab-pane">
+      <div class="dual-grid">
+        <!-- SYSTEM HEALTH CONTROL -->
+        <div class="panel-card">
+          <div class="panel-header">
+            <div>
+              <h3>Licensing Infrastructure Status</h3>
+              <p class="subtitle">Simulate real cloud status for both APK and Partner Panel.</p>
+            </div>
+          </div>
+          <div class="admin-control-box">
+            <div class="status-btn-group">
+              <button class="btn btn-status online" onclick="setSystemStatus('ONLINE')">ONLINE</button>
+              <button class="btn btn-status degraded" onclick="setSystemStatus('DEGRADED')">DEGRADED</button>
+              <button class="btn btn-status maintenance" onclick="setSystemStatus('MAINTENANCE')">MAINTENANCE</button>
+              <button class="btn btn-status offline" onclick="setSystemStatus('OFFLINE')">OFFLINE</button>
+            </div>
+            <p class="info-note">Toggling this instantly informs the FZ ENGINE Android app via its /api/server/status heartbeat.</p>
+          </div>
+        </div>
+
+        <!-- CREATE NEW SELLER (TEST 1 REQUIREMENT) -->
+        <div class="panel-card">
+          <div class="panel-header">
+            <div>
+              <h3>Provision New Seller (Step 21 Test 1)</h3>
+              <p class="subtitle">Owner authorizes a new distributor onto the ecosystem.</p>
+            </div>
+          </div>
+          <form onsubmit="handleCreateSeller(event)">
+            <div class="form-group">
+              <label class="form-label">Seller Display Name</label>
+              <input type="text" id="newSellerName" class="form-input" placeholder="e.g. Phoenix License Hub" required>
+            </div>
+            <div class="form-row">
+              <div class="form-group col-6">
+                <label class="form-label">Country</label>
+                <input type="text" id="newSellerCountry" class="form-input" placeholder="e.g. United Kingdom" required>
+              </div>
+              <div class="form-group col-6">
+                <label class="form-label">Country Code</label>
+                <input type="text" id="newSellerCode" class="form-input" placeholder="GB" maxlength="2" required>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Contact Method</label>
+              <input type="text" id="newSellerContact" class="form-input" placeholder="t.me/phoenix_hub" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Create & Authorize Seller</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- NOTIFICATIONS MODAL / SLIDEOUT -->
+  <div id="notifModal" class="modal-overlay hidden" onclick="toggleNotifications()">
+    <div class="modal-card" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <h3>System Notifications</h3>
+        <button class="icon-btn" onclick="toggleNotifications()">✕</button>
+      </div>
+      <div id="notifList" class="notif-list">
+        <p class="text-center">Loading notifications...</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="/app.js"></script>
+</body>
+</html>
