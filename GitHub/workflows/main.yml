@@ -1,4 +1,4 @@
-name: Build FZ ENGINE APK - Android
+name: Build FZ ENGINE APK
 
 on:
   workflow_dispatch:
